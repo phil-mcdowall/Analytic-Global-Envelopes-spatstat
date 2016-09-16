@@ -1,4 +1,4 @@
-AGE = function(n,r,h,U,A){
+AGEpcf = function(n,r,h,U,A){
   out = vector(length=length(r))
   for(i in 1:length(r)){
     ecf = A - ((r[i]/pi)*U) + ((r[i]^2)/pi)
@@ -7,16 +7,16 @@ AGE = function(n,r,h,U,A){
   return(out)
 }
 
-AGEpcf <- function(pattern,alpha,bw=0.01,r=NULL){
+AGEpcfPp <- function(pattern,alpha,bw=0.01,r=NULL){
   n = pattern$n
   pattern_pcf = spatstat::pcf(pattern,bw=bw)
   r = pattern_pcf$r
   w = Window(pattern)
   area = spatstat::area(w)
   perimeter = spatstat::perimeter(w)
-  AGEsig = AGE(n=n,r=r,h=bw,U=perimeter,A=area)
+  AGEsig = AGEpcf(n=n,r=r,h=bw,U=perimeter,A=area)
   beta = 1 - (1 - alpha)^(1/length(r))
-  crit = qnorm(1−alpha/2)
+  crit = qnorm(1 - alpha/2)
   upper = 1 + crit*AGEsig
   lower = 1 - crit*AGEsig
   pz = max((abs(pattern_pcf$iso-1)/AGEsig)[-1])
