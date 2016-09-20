@@ -1,7 +1,10 @@
+#Equation 5
 AGEpcf = function(n,r,h,U,A){
   out = vector(length=length(r))
   for(i in 1:length(r)){
+    #Edge correction
     ecf = A - ((r[i]/pi)*U) + ((r[i]^2)/pi)
+    #sd of s(r)
     out[i] = (1/n)*(1/sqrt(r[i]))*(1/sqrt(h))*sqrt((A/ecf))*sqrt((A/(2*pi)))
   }
   return(out)
@@ -15,10 +18,13 @@ AGEpcfPp <- function(pattern,alpha,bw=0.01,r=NULL){
   area = spatstat::area(w)
   perimeter = spatstat::perimeter(w)
   AGEsig = AGEpcf(n=n,r=r,h=bw,U=perimeter,A=area)
+  #upper and lower envelopes 
+  #eq. 8
   beta = 1 - (1 - alpha)^(1/length(r))
   crit = qnorm(1 - alpha/2)
   upper = 1 + crit*AGEsig
   lower = 1 - crit*AGEsig
+  #eq. 9
   pz = max((abs(pattern_pcf$iso-1)/AGEsig)[-1])
   ploc = 2*(1-pnorm(pz))
   p = 1 - ((1-ploc)^(length(r)-1))
@@ -36,6 +42,7 @@ AGEpcfPp <- function(pattern,alpha,bw=0.01,r=NULL){
                lower = lower,
                p = p
   )
+  #return s3 object, class = "AGEpcf"
   class(this) <- append(class(this),"AGEpcf")
   return(this)
 } 
